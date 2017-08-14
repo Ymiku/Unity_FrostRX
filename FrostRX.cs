@@ -6,7 +6,7 @@ public interface IRXModel{
 	IRXModel ExecuteAfterTime (FrostRX.RXFunc f, float t);
 	IRXModel ExecuteWhen (FrostRX.RXFunc f, FrostRX.CondFunc con);
 }
-public class RXModelBase{
+public class RXModelBase:IRXModel{
 	public IRXModel model = null;
 	public FrostRX.RXFunc func;
 	public IRXModel ExecuteAfterTime(FrostRX.RXFunc f,float t)
@@ -20,7 +20,7 @@ public class RXModelBase{
 		return model;
 	}
 }
-public class RXTimeModel:RXModelBase,IRXModel{
+public class RXTimeModel:RXModelBase{
 	public float time;
 	public void Execute()
 	{
@@ -33,7 +33,7 @@ public class RXTimeModel:RXModelBase,IRXModel{
 		}
 	}
 }
-public class RXCondModel:RXModelBase,IRXModel{
+public class RXCondModel:RXModelBase{
 	public FrostRX.CondFunc cond;
 	public void Execute()
 	{
@@ -53,12 +53,16 @@ public partial class FrostRX : UnitySingleton<FrostRX> {
 	{
 		//Test
 		ExecuteAfterTime (() => {
-			Debug.Log(1f);
-		},1f).ExecuteAfterTime (() => {
-			Debug.Log(2f);
-		},1f).ExecuteAfterTime (() => {
-			Debug.Log(3f);
-		},1f);
+			Debug.Log (1f);
+		}, 1f).ExecuteAfterTime (() => {
+			Debug.Log (2f);
+		}, 1f).ExecuteAfterTime (() => {
+			Debug.Log (3f);
+		}, 1f).ExecuteWhen (() => {
+			Debug.Log (4f);
+		}, () => {
+			return true;
+		});
 	}
 	public RXTimeModel ExecuteAfterTime(RXFunc f,float t)
 	{
