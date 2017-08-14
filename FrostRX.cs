@@ -6,7 +6,7 @@ public interface IRXModel{
 	IRXModel ExecuteAfterTime (FrostRX.RXFunc f, float t);
 	IRXModel ExecuteWhen (FrostRX.RXFunc f, FrostRX.CondFunc con);
 }
-public class RXModelBase:IRXModel{
+public class RXModelBase{
 	public IRXModel model = null;
 	public FrostRX.RXFunc func;
 	public IRXModel ExecuteAfterTime(FrostRX.RXFunc f,float t)
@@ -20,7 +20,7 @@ public class RXModelBase:IRXModel{
 		return model;
 	}
 }
-public class RXTimeModel:RXModelBase{
+public class RXTimeModel:RXModelBase,IRXModel{
 	public float time;
 	public void Execute()
 	{
@@ -33,7 +33,7 @@ public class RXTimeModel:RXModelBase{
 		}
 	}
 }
-public class RXCondModel:RXModelBase{
+public class RXCondModel:RXModelBase,IRXModel{
 	public FrostRX.CondFunc cond;
 	public void Execute()
 	{
