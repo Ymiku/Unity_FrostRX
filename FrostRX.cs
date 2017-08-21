@@ -4,6 +4,7 @@ using UnityEngine;
 public interface IRXModel{
 	void Execute();
 	IRXModel ExecuteAfterTime (FrostRX.RXFunc f, float t);
+	IRXModel ExecuteUntil (FrostRX.RXFunc f, FrostRX.CondFunc con);
 	IRXModel ExecuteWhen (FrostRX.RXFunc f, FrostRX.CondFunc con);
 	IRXModel ExecuteWhenStay (FrostRX.RXFunc f, FrostRX.CondFunc con, float t);
 	IRXModel Execute (FrostRX.RXFunc f);
@@ -20,6 +21,11 @@ public class RXModelBase{
 	public IRXModel ExecuteWhen(FrostRX.RXFunc f,FrostRX.CondFunc con)
 	{
 		model=new RXCondModel(f,con);
+		return model;
+	}
+	public IRXModel ExecuteUntil(FrostRX.RXFunc f,FrostRX.CondFunc con)
+	{
+		model=new RXUntilModel(f,con);
 		return model;
 	}
 	public IRXModel ExecuteWhenStay(FrostRX.RXFunc f,FrostRX.CondFunc con,float t)
@@ -70,6 +76,24 @@ public class RXCondModel:RXModelBase,IRXModel{
 			if (model != null)
 				FrostRX.Instance.funcList.Add (model);
 			FrostRX.Instance.funcList.Remove (this);
+		}
+	}
+}
+public class RXUntilModel:RXModelBase,IRXModel{
+	public FrostRX.CondFunc cond;
+	public RXUntilModel(FrostRX.RXFunc f,FrostRX.CondFunc c)
+	{
+		func = f;
+		cond = c;
+	}
+	public void Execute()
+	{
+		if (cond () == true) {
+			if (model != null)
+				FrostRX.Instance.funcList.Add (model);
+			FrostRX.Instance.funcList.Remove (this);
+		} else {
+			func ();
 		}
 	}
 }
@@ -168,6 +192,13 @@ public class FrostRX : UnitySingleton<FrostRX> {
 	{
 		IRXModel model;
 		model=new RXCondModel(f,con);
+		funcList.Add (model);
+		return model;
+	}
+	public IRXModel ExecuteUntil(FrostRX.RXFunc f,FrostRX.CondFunc con)
+	{
+		IRXModel model;
+		model=new RXUntilModel(f,con);
 		funcList.Add (model);
 		return model;
 	}
