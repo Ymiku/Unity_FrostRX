@@ -46,16 +46,16 @@ public class NoticePanel : MonoBehaviour {
 		
     	}
     
-	    public void Close()
+	public void Close()
 
-	    {
+	{
 
 		group.alpha = 0.0f;
 
 		group.blocksRaycasts = false;
 
-			FrostRX.Instance.RestartRxById (rxId);
+		FrostRX.Instance.RestartRxById (rxId);
 
-	    }
+	}
 
 }
