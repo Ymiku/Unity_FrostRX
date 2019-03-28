@@ -36,13 +36,13 @@ public class RXModelBase:IRXModel
     {
         if (model != null)
         {
-            FrostRX.Instance.funcList.Add(model);
+            FrostRX.Instance.activeModelList.Add(model);
         }
         else
         {
             FrostRX.Instance.EndRxById(rxId);
         }
-        FrostRX.Instance.funcList.Remove(this);
+        FrostRX.Instance.activeModelList.Remove(this);
     }
     public IRXModel GoToBegin()
     {
@@ -112,7 +112,7 @@ public class RXGoToBegin : RXModelBase
         FrostRX.Instance.RestartRxById(rxId);
         if (model != null)
         {
-            FrostRX.Instance.funcList.Add(model);
+            FrostRX.Instance.activeModelList.Add(model);
         }
     }
 }
@@ -263,7 +263,7 @@ public class FrostRX : Singleton<FrostRX>
     public delegate void RXFunc();
     public delegate bool CondFunc();
     private Dictionary<int, IRXModel> _rxDic = new Dictionary<int, IRXModel>();
-    public List<IRXModel> funcList = new List<IRXModel>();
+    public List<IRXModel> activeModelList = new List<IRXModel>();
     int rxId = 0;
     public static IRXModel Start()
     {
@@ -279,7 +279,7 @@ public class FrostRX : Singleton<FrostRX>
         int id = GetRxId();
         model = new RXRoot(id);
         _rxDic.Add(id,model);
-        funcList.Add(model);
+        activeModelList.Add(model);
         return model;
     }
     public IRXModel StartRX(Object o)
@@ -292,27 +292,27 @@ public class FrostRX : Singleton<FrostRX>
     {
         if (_rxDic.ContainsKey(rxId))
             _rxDic.Remove(rxId);
-        for (int i = 0; i < funcList.Count; i++)
+        for (int i = 0; i < activeModelList.Count; i++)
         {
-            if (funcList[i].GetId() == rxId)
+            if (activeModelList[i].GetId() == rxId)
             {
-                funcList.RemoveAt(i);
+                activeModelList.RemoveAt(i);
                 i--;
             }
         }
     }
     public void RestartRxById(int rxId)
     {
-		for (int i = 0; i < funcList.Count; i++)
+		for (int i = 0; i < activeModelList.Count; i++)
 		{
-			if (funcList[i].GetId() == rxId)
+			if (activeModelList[i].GetId() == rxId)
 			{
-				funcList.RemoveAt(i);
+				activeModelList.RemoveAt(i);
 				i--;
 			}
 		}
         if (_rxDic.ContainsKey(rxId))
-            funcList.Add(_rxDic[rxId]);
+            activeModelList.Add(_rxDic[rxId]);
     }
     int GetRxId()
     {
@@ -324,17 +324,17 @@ public class FrostRX : Singleton<FrostRX>
     }
     public void Execute()
     {
-        for (int i = funcList.Count - 1; i >= 0; i--)
+        for (int i = activeModelList.Count - 1; i >= 0; i--)
         {
             try
             {
-                funcList[i].Execute();
+                activeModelList[i].Execute();
             }
             catch (System.Exception ex)
             {
-                int id = funcList[i].GetId();
+                int id = activeModelList[i].GetId();
 #if UNITY_EDITOR
-                Debug.LogError("RX Error:ID="+funcList[i].GetId().ToString()+",debugObj="+(_rxDic[id] as RXRoot).debugObj.ToString());
+                Debug.LogError("RX Error:ID="+activeModelList[i].GetId().ToString()+",debugObj="+(_rxDic[id] as RXRoot).debugObj.ToString());
                 throw ex;
 #endif
                 EndRxById(id);
@@ -343,7 +343,7 @@ public class FrostRX : Singleton<FrostRX>
     }
     public void Clear()
     {
-        funcList.Clear();
+        activeModelList.Clear();
         _rxDic.Clear();
     }
 }
