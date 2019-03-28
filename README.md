@@ -1,4 +1,7 @@
 # FrostRX
+
+注意：需自己在外面调用 FrostRX.Instance.Execute();
+
 Example:
 
 public class NoticePanel : MonoBehaviour {
