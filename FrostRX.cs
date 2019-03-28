@@ -95,6 +95,7 @@ public class RXModelBase:IRXModel
 }
 public class RXRoot : RXModelBase
 {
+    public Object debugObj;
     public RXRoot(int rxId)
     {
         this.rxId = rxId;
@@ -264,6 +265,14 @@ public class FrostRX : Singleton<FrostRX>
     private Dictionary<int, IRXModel> _rxDic = new Dictionary<int, IRXModel>();
     public List<IRXModel> funcList = new List<IRXModel>();
     int rxId = 0;
+    public static IRXModel Start()
+    {
+        return Instance.StartRX();
+    }
+    public static IRXModel Start(Object o)
+    {
+        return Instance.StartRX(o);
+    }
     public IRXModel StartRX()
     {
         IRXModel model;
@@ -272,6 +281,12 @@ public class FrostRX : Singleton<FrostRX>
         _rxDic.Add(id,model);
         funcList.Add(model);
         return model;
+    }
+    public IRXModel StartRX(Object o)
+    {
+        RXRoot root = StartRX() as RXRoot;
+        root.debugObj = o;
+        return root;
     }
     public void EndRxById(int rxId)
     {
@@ -317,7 +332,12 @@ public class FrostRX : Singleton<FrostRX>
             }
             catch (System.Exception ex)
             {
-                funcList.RemoveAt(i);
+                int id = funcList[i].GetId();
+#if UNITY_EDITOR
+                Debug.LogError("RX Error:ID="+funcList[i].GetId().ToString()+",debugObj="+(_rxDic[id] as RXRoot).debugObj.ToString());
+                throw ex;
+#endif
+                EndRxById(id);
             }
         }
     }
