@@ -273,6 +273,10 @@ public class FrostRX : Singleton<FrostRX>
     {
         return Instance.StartRX(o);
     }
+	public static void End(int id)
+	{
+		Instance.EndRxById(id);
+	}
     public IRXModel StartRX()
     {
         IRXModel model;
@@ -290,6 +294,8 @@ public class FrostRX : Singleton<FrostRX>
     }
     public void EndRxById(int rxId)
     {
+		if (rxId == -1)
+			return;
         if (_rxDic.ContainsKey(rxId))
             _rxDic.Remove(rxId);
         for (int i = 0; i < activeModelList.Count; i++)
