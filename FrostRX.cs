@@ -40,7 +40,7 @@ public class RXModelBase:IRXModel
         }
         else
         {
-            FrostRX.Instance.EndRxById(rxId);
+            FrostRX.Instance.EndRxById(ref rxId);
         }
         FrostRX.Instance.activeModelList.Remove(this);
     }
@@ -273,9 +273,9 @@ public class FrostRX : Singleton<FrostRX>
     {
         return Instance.StartRX(o);
     }
-	public static void End(int id)
+	public static void End(ref int id)
 	{
-		Instance.EndRxById(id);
+		Instance.EndRxById(ref id);
 	}
     public IRXModel StartRX()
     {
@@ -292,7 +292,7 @@ public class FrostRX : Singleton<FrostRX>
         root.debugObj = o;
         return root;
     }
-    public void EndRxById(int rxId)
+    public void EndRxById(ref int rxId)
     {
 		if (rxId == -1)
 			return;
@@ -306,6 +306,7 @@ public class FrostRX : Singleton<FrostRX>
                 i--;
             }
         }
+        rxId = -1;
     }
     public void RestartRxById(int rxId)
     {
@@ -343,7 +344,7 @@ public class FrostRX : Singleton<FrostRX>
                 Debug.LogError("RX Error:ID="+activeModelList[i].GetId().ToString()+",debugObj="+(_rxDic[id] as RXRoot).debugObj.ToString());
                 throw ex;
 #endif
-                EndRxById(id);
+                EndRxById(ref id);
             }
         }
     }
